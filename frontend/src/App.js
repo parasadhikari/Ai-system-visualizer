@@ -12,7 +12,7 @@ function App() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://localhost:5000/generate", {
+      const res = await axios.post("https://ai-system-visualizer.onrender.com/generate", {
         query: input,
       });
 

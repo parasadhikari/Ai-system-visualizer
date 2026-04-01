@@ -9,6 +9,8 @@ app.use(express.json());
 
 app.post("/generate", async (req, res) => {
   try {
+    console.log("Request received");
+console.log("API KEY:", process.env.GEMINI_API_KEY);
     const { query } = req.body;
 
     const prompt = `

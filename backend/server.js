@@ -1,3 +1,4 @@
+console.log("SERVER FILE STARTED");
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
@@ -10,7 +11,10 @@ app.use(express.json());
 app.post("/generate", async (req, res) => {
   try {
     console.log("Request received");
-console.log("API KEY:", process.env.GEMINI_API_KEY);
+    console.log(
+      "API KEY Loaded:",
+      process.env.GEMINI_API_KEY ? "YES" : "NO"
+    );
     const { query } = req.body;
 
     const prompt = `
@@ -28,16 +32,16 @@ Return ONLY JSON in this format:
 }
 `;
 
-const response = await axios.post(
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-  {
-    contents: [
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
-        parts: [{ text: prompt }],
-      },
-    ],
-  }
-);
+        contents: [
+          {
+            parts: [{ text: prompt }],
+          },
+        ],
+      }
+    );
 
     const text =
       response.data.candidates[0].content.parts[0].text;
@@ -50,13 +54,19 @@ const response = await axios.post(
 
   } catch (error) {
     console.error("FULL ERROR:", error.response?.data || error.message);
-    res.status(500).json({ error: "AI Error" });
+
+    res.status(500).json({
+      error: error.response?.data || error.message
+    });
   }
 });
 
-app.listen(process.env.PORT, () => {
-  console.log("Server running on port 5000");
+const PORT = process.env.PORT || 5000;
+
+console.log("BEFORE LISTEN");
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
-});
+
+console.log("AFTER LISTEN");
